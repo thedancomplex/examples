@@ -276,7 +276,7 @@ def getStream():
         break 
   return img2
 
-def doBarrel(src):
+def doBarrel4x3(src):
   width  = src.shape[1]
   height = src.shape[0]
 
@@ -307,98 +307,42 @@ def doBarrel(src):
   # here the undistortion will be computed
   return cv2.undistort(src,cam,distCoeff)
 
+def doBarrel3x4(src):
+  width  = src.shape[1]
+  height = src.shape[0]
 
-def DrawGLScene():
-                global loop
-                loop+=1
-                timeDifference()
-                global X_AXIS,Y_AXIS,Z_AXIS
-                global DIRECTION
-                global size
-                
-                #gets the position data from the oculus rift
-                #oculusLoop()
-                
-                #openGL stuff
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-                
-                glViewport(0, -200, 640, 800)
-                glMatrixMode(GL_PROJECTION)
-                glLoadIdentity()
-                gluPerspective(35., 640 / float(800), .1, 1000.)
-                glMatrixMode(GL_MODELVIEW)
-                
-                glLoadIdentity()
-                glTranslatef(0.0,0.0,-50.0)
-                
-                glRotatef(X_AXIS,1.0,0.0,0.0)
-                glRotatef(Y_AXIS,0.0,1.0,0.0)
-                glRotatef(Z_AXIS,0.0,0.0,1.0)
-                
-                glEnable(GL_LIGHTING)
-                glEnable(GL_LIGHT0)
-                #gets the 3D model to use from another file
-                #glut_teapot.glutSolidTeapot(5)
-                glDisable(GL_LIGHTING)
-                
-                glutSwapBuffers()
-                global width
-                global height
-                global img
-                global cropXL
-                global cropXR
-                global cropYL
-                global cropYR
-                glFlush()
-                glReadBuffer( GL_BACK )
-                #gets the image from the graphics card
-                img1 = np.asarray(glReadPixels(128, 60, 420, 420, GL_RGB, GL_BYTE))
-                img1 = img1.astype(np.uint8)
-                img = np.flipud(img1)
-                
-                                     
-                #reads the frame from the camera stream
-#                x,fraL = cL.read()
-#                x,fraR = cR.read()
-                #global fraL
-                #global fraR
-                #global stream
-                
-                fraL = deepcopy(getStream())
-                fraR = deepcopy(getStream())
+  distCoeff = np.zeros((4,1),np.float64)
 
-                height, width, t = fraL.shape
-                #resizes teapot image
-                imgS = cv2.resize(img, (200,200), interpolation=cv2.INTER_AREA)
-                hS, wS, t = imgS.shape
-                
-                timeDifference()
-                
-                
-                #creates distortion matrix
-                matrixL = createDistortionMatrix(fxL, cxL, fyL, cyL)
-                matrixR = createDistortionMatrix(fxR, cxR, fyR, cyR)
-                #translates, crops and distorts image
-##                fraLT = translate(fraL, xL+xO, yL+yO)
-##                fraRT = translate(fraR, xR+xO, yR+yO)
-##                fraLd = transform(fraLT, matrixL)
-##                fraRd = transform(fraRT, matrixR)
-#                fraLd = transform(fraL, matrixL)
-#                fraRd = transform(fraR, matrixR)
-#                fraLT2 = translate(fraLd, xO2, yO2)
-#                fraRT2 = translate(fraRd, xO2, yO2)
-#                fraLs = crop(fraLT2, cropXL, cropXR, cropYL, cropYR)
-#                fraRs = crop(fraRT2, cropXL, cropXR, cropYL, cropYR)
-                height, width, depth = img.shape
-                
-                # keep at a hard 800x600
-                fraL = cv2.resize(fraL, (800, 600)) 
-                fraR = cv2.resize(fraR, (800, 600))
-                
-                fraL = doBarrel(fraL)
-                fraR = doBarrel(fraR)
-#crop_img = img[200:400, 100:300] # Crop from x, y, w, h -> 100, 200, 300, 400
-                nheight, nwidth, ndepth = fraL.shape
+  # TODO: add your coefficients here!
+  #k1 = 1.0e-5; # negative to remove barrel distortion
+  k1 = 4*1.0e-4; # negative to remove barrel distortion
+##  k2 = 1.0e-5;
+  k2 = 7*1.0e-7;
+#  k2 = 0.0;
+ # k2 = 0.0;
+  p1 = 0.0;
+  p2 = 0.0;
+
+  distCoeff[0,0] = k1;
+  distCoeff[1,0] = k2;
+  distCoeff[2,0] = p1;
+  distCoeff[3,0] = p2;
+
+  # assume unit matrix for camera
+  cam = np.eye(3,dtype=np.float32)
+
+  cam[0,2] = width/2.0  # define center x
+  cam[1,2] = height/2.0 # define center y
+  cam[0,0] = 11.        # define focal length x
+  cam[1,1] = 11.        # define focal length y
+
+  # here the undistortion will be computed
+  return cv2.undistort(src,cam,distCoeff)
+
+
+def doResize4x3(src):
+                # do resize for 4:3 camera (i.e. normal)
+                nheight, nwidth, ndepth = src.shape
                 dxx = 640
                 yy = 40
                 dyy = 600-2*yy 
@@ -406,10 +350,40 @@ def DrawGLScene():
                 xx = (nwidth - dxx) / 2.0 
 #                dyy = dxx*(800.0/640.0)
                 #fraL = fraL[yy:(yy+dyy), xx:(xx+dxx)]
-                fraL = fraL[yy:(yy+dyy), xx:(xx+dxx)]
-                fraR = fraR[yy:(yy+dyy), xx:(xx+dxx)]
-                fraLresize = cv2.resize(fraL, (640, 800)) 
-                fraRresize = cv2.resize(fraR, (640, 800)) 
+                src = src[yy:(yy+dyy), xx:(xx+dxx)]
+                return cv2.resize(src, (640,800))
+
+def doResize3x4(src):
+  h , w, d = src.shape
+  dx1 = 420
+  x01 = (w - dx1)/2.0
+  dy1 = dx1 * (800.0/640.0)
+  y01 = (h - dy1)/2.0
+
+  src = src[y01:(y01+dy1),x01:(x01+dx1)]
+               
+  return cv2.resize(src,(640,800))
+
+def DrawGLScene():
+                
+                fraL = deepcopy(getStream())
+                fraR = deepcopy(getStream())
+
+                height, width, t = fraL.shape
+                
+                #creates distortion matrix
+                matrixL = createDistortionMatrix(fxL, cxL, fyL, cyL)
+                matrixR = createDistortionMatrix(fxR, cxR, fyR, cyR)
+                
+                # keep at a hard 800x600
+                fraL = cv2.resize(fraL, (600, 800)) 
+                fraR = cv2.resize(fraR, (600, 800))
+                
+                fraL = doBarrel3x4(fraL)
+                fraR = doBarrel3x4(fraR)
+#crop_img = img[200:400, 100:300] # Crop from x, y, w, h -> 100, 200, 300, 400
+                fraLresize = doResize3x4(fraL) 
+                fraRresize = doResize3x4(fraR) 
 
                 #fraCom = joinImages(fraLs, fraRs)
                 #fraCom = joinImages(fraL, fraR)
@@ -417,7 +391,7 @@ def DrawGLScene():
                 fraCom = joinImages(fraLresize, fraRresize)   # just resized images
                 timeDifference()
                # print('---------------')
-               # print(fraCom.shape, ' ', dyy, ' ' , yy, ' ' , ddyy)
+                #print(fraCom.shape )
                # print('---------------')
                 #displays image
                 ##cv2.imshow('vid',fraCom)
