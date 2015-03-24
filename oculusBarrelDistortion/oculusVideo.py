@@ -135,16 +135,17 @@ import StringIO
 import time
  
 class CamHandler(BaseHTTPRequestHandler):
-        print '.'
-        print '.'
+##        print '.'
+##        print '.'
 	def do_GET(self):
 		if self.path.endswith('.mjpg'):
 			self.send_response(200)
 			self.send_header('Content-type','multipart/x-mixed-replace; boundary=--jpgboundary')
 			self.end_headers()
 			while True:
-                                print '.'
 				try:
+                #return cv2.resize(src, (640,800))
+                                        #img = cv2.resize(getVideo(), (640,400))
                                         img = getVideo()
 					imgRGB=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 					jpg = Image.fromarray(imgRGB)
@@ -155,7 +156,7 @@ class CamHandler(BaseHTTPRequestHandler):
 					self.send_header('Content-length',str(tmpFile.len))
 					self.end_headers()
 					jpg.save(self.wfile,'JPEG')
-					time.sleep(0.05)
+					#time.sleep(0.05)
 				except KeyboardInterrupt:
 					break
 			return
@@ -513,7 +514,7 @@ def DrawGLScene():
                # print('---------------')
                 #displays image
                 ##cv2.imshow('vid',fraCom)
-                sendImgUDP(fraCom)
+                ##sendImgUDP(fraCom)
                 cv2.imshow('vid',fraCom)
                 timeDifference()
   
@@ -724,6 +725,6 @@ try:
 except KeyboardInterrupt:
 #  capture.release()
   server.socket.close()
-cv2.namedWindow('vid', 16 | cv2.CV_WINDOW_AUTOSIZE)
-cv2.setWindowProperty("vid", cv2.CV_WINDOW_AUTOSIZE, cv2.cv.CV_WINDOW_FULLSCREEN)
-main()
+#######cv2.namedWindow('vid', 16 | cv2.CV_WINDOW_AUTOSIZE)
+#######cv2.setWindowProperty("vid", cv2.CV_WINDOW_AUTOSIZE, cv2.cv.CV_WINDOW_FULLSCREEN)
+#######main()
