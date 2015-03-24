@@ -276,6 +276,38 @@ def getStream():
         break 
   return img2
 
+def doBarrel(src):
+  width  = src.shape[1]
+  height = src.shape[0]
+
+  distCoeff = np.zeros((4,1),np.float64)
+
+  # TODO: add your coefficients here!
+  #k1 = 1.0e-5; # negative to remove barrel distortion
+  k1 = 3*1.0e-5; # negative to remove barrel distortion
+##  k2 = 1.0e-5;
+  k2 = 2*1.0e-7;
+ # k2 = 0.0;
+  p1 = 0.0;
+  p2 = 0.0;
+
+  distCoeff[0,0] = k1;
+  distCoeff[1,0] = k2;
+  distCoeff[2,0] = p1;
+  distCoeff[3,0] = p2;
+
+  # assume unit matrix for camera
+  cam = np.eye(3,dtype=np.float32)
+
+  cam[0,2] = width/2.0  # define center x
+  cam[1,2] = height/2.0 # define center y
+  cam[0,0] = 11.        # define focal length x
+  cam[1,1] = 11.        # define focal length y
+
+  # here the undistortion will be computed
+  return cv2.undistort(src,cam,distCoeff)
+
+
 def DrawGLScene():
                 global loop
                 loop+=1
@@ -358,24 +390,35 @@ def DrawGLScene():
 #                fraLs = crop(fraLT2, cropXL, cropXR, cropYL, cropYR)
 #                fraRs = crop(fraRT2, cropXL, cropXR, cropYL, cropYR)
                 height, width, depth = img.shape
-                dx = 0
-                dy = 0
-                height = 600
-                width = 800
-                desWidth = 640
-                desHeight = 800
-                ddx = np.abs(desWidth - width)/2
-                fraLcropH = fraL[0:(3*height-dy),(3*ddx):(3*(width-ddx))]
+                
+                # keep at a hard 800x600
+                fraL = cv2.resize(fraL, (800, 600)) 
+                fraR = cv2.resize(fraR, (800, 600))
+                
+                fraL = doBarrel(fraL)
+                fraR = doBarrel(fraR)
+#crop_img = img[200:400, 100:300] # Crop from x, y, w, h -> 100, 200, 300, 400
+                nheight, nwidth, ndepth = fraL.shape
+                dxx = 640
+                yy = 40
+                dyy = 600-2*yy 
+                ddyy = (nheight - dyy)/2
+                xx = (nwidth - dxx) / 2.0 
+#                dyy = dxx*(800.0/640.0)
+                #fraL = fraL[yy:(yy+dyy), xx:(xx+dxx)]
+                fraL = fraL[yy:(yy+dyy), xx:(xx+dxx)]
+                fraR = fraR[yy:(yy+dyy), xx:(xx+dxx)]
                 fraLresize = cv2.resize(fraL, (640, 800)) 
                 fraRresize = cv2.resize(fraR, (640, 800)) 
 
                 #fraCom = joinImages(fraLs, fraRs)
                 #fraCom = joinImages(fraL, fraR)
-                fraCom = joinImages(fraLresize, fraRresize)
+                ##fraCom = joinImages(fraLresize, fraRresize)   # just resized images
+                fraCom = joinImages(fraLresize, fraRresize)   # just resized images
                 timeDifference()
-                print('---------------')
-                print(fraCom.shape)
-                print('---------------')
+               # print('---------------')
+               # print(fraCom.shape, ' ', dyy, ' ' , yy, ' ' , ddyy)
+               # print('---------------')
                 #displays image
                 ##cv2.imshow('vid',fraCom)
                 cv2.imshow('vid',fraCom)
