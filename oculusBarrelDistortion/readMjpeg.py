@@ -40,7 +40,7 @@ import StringIO
 
 
 #ipcam
-stream=urllib.urlopen('http://robot:robot1234@192.168.1.160:80/mjpg/video.mjpg')
+stream=urllib.urlopen('http://127.0.0.1:8080/.mjpg')
 bytes=''
 fraL = np.zeros((480,640,3), np.uint8)
 fraR = np.zeros((480,640,3), np.uint8)
@@ -170,19 +170,6 @@ class CamHandler(BaseHTTPRequestHandler):
  
  
 def compress_image(src):
-    img = src 
-    tmp = StringIO.StringIO()
-    img.save(tmp, 'JPEG', quality=80)
-    tmp.seek(0)
-    output_data = tmp.getvalue()
- 
-    headers = dict()
-    headers['Content-Type'] = 'image/jpeg'
-    headers['Content-Length'] = str(len(output_data))
-    pic.set_contents_from_string(output_data, headers=headers, policy='public-read')
-    
-    tmp.close()
-    input_file.close()
     return src 
 
 def sendImgUDP(src):
@@ -513,7 +500,7 @@ def DrawGLScene():
                # print('---------------')
                 #displays image
                 ##cv2.imshow('vid',fraCom)
-                sendImgUDP(fraCom)
+                ##sendImgUDP(fraCom)
                 cv2.imshow('vid',fraCom)
                 timeDifference()
   
@@ -717,13 +704,6 @@ def calibrate():
 #cv2.setWindowProperty("vid", cv2.WND_PROP_FULLSCREEN, cv2.cv.CV_WINDOW_FULLSCREEN)
 #remove hashes and everyting between to calibrate#calibrate()
 
-try:
-  server = HTTPServer(('',8080),CamHandler)
-  print "server started"
-  server.serve_forever()
-except KeyboardInterrupt:
-#  capture.release()
-  server.socket.close()
 cv2.namedWindow('vid', 16 | cv2.CV_WINDOW_AUTOSIZE)
 cv2.setWindowProperty("vid", cv2.CV_WINDOW_AUTOSIZE, cv2.cv.CV_WINDOW_FULLSCREEN)
 main()
