@@ -29,9 +29,6 @@ while 1 :
         exit()
     else:
         # send the character to the device
-        # (note that I happend a \r\n carriage return and line feed to the characters - this is requested by my device)
-#        ser.write(input + '\r\n')
-
 	if the_swp == 0 :
 		goal_val_h = 0x03
 		goal_val_l = 0xff
@@ -52,6 +49,4 @@ while 1 :
 	the_out_list 	= a_head + a_id + a_len + a_cmd + a_address + a_goal_l + a_goal_h + a_sum
 	the_out 	= bytearray(the_out_list)
 	print the_out_list
-        #the_out = bytearray([ 0XFF, 0XFF, 0XFE, 0X18, 0X83, 0X1E, 0X04, 0X00, 0X10, 0X00, 0X50, 0X01, 0X01, 0X20, 0X02, 0X60, 0X03, 0X02, 0X30, 0X00, 0X70, 0X01, 0X03, 0X20, 0X02, 0X80, 0X03, 0X12])
         print ser.write(the_out)
-        #ser.write(input)
