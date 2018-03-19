@@ -1,2 +1,3 @@
 sudo apt-get install python-opencv
-pip install "picamera[array]"
+sudo apt-get install python-picamera
+#pip install "picamera[array]"
