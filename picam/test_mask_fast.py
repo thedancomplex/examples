@@ -46,23 +46,25 @@ def getCenterSlow(img):
 
 
 while True:
-  tick = time.time() 
   # grab an image from the camera
   rawCapture = PiRGBArray(camera)
+  tick = time.time() 
   camera.capture(rawCapture, format="bgr")
+
+  # image array - 0.001
   image = rawCapture.array
 
   # resize
-  ## img=cv2.resize(image,(160,120))
+  #img=cv2.resize(image,(160,120))
   img = image
 
-  # image to HSV from BGR
+  # image to HSV from BGR - 0.016
   imgHSV= cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 
-  # Get mask
+  # Get mask  - 0.009
   mask=cv2.inRange(imgHSV,lowerBound,upperBound)
 
-  # Get center
+  # Get center  - 0.008
   center = getCenter(mask)
 
   # draw circle
@@ -74,7 +76,7 @@ while True:
   #cv2.imshow("Mask", mask)
   
   tock = time.time()
-  print "Time to complete = " + str(tock - tick) + " sec"
+  #print "Time to complete = " + str(tock - tick) + " sec"
 
   cv2.waitKey(10)
   #time.sleep(2.0)

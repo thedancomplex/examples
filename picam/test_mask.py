@@ -14,7 +14,7 @@ camera = PiCamera()
 time.sleep(0.1)
 
 # Color Paramaters in 8-bit HSV
-lowerBound=np.array([160,50,50])
+lowerBound=np.array([160,30,30])
 upperBound=np.array([179,255,255])
 
 
@@ -46,8 +46,8 @@ while True:
   image = rawCapture.array
 
   # resize
-  ## img=cv2.resize(image,(160,120))
-  img = image
+  img=cv2.resize(image,(160,120))
+  #img = image
 
   # image to HSV from BGR
   imgHSV= cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
@@ -63,8 +63,8 @@ while True:
 
   print center
 
-  cv2.imshow("Image", img)
-  #cv2.imshow("Mask", mask)
+  #cv2.imshow("Image", img)
+  cv2.imshow("Mask", mask)
   
   tock = time.time()
   print "Time to complete = " + str(tock - tick) + " sec"
