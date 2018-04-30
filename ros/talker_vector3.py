@@ -9,9 +9,9 @@ def talker():
     rate = rospy.Rate(10) # 10hz
     while not rospy.is_shutdown():
         euler_ref_msg = Vector3()
-        euler_ref_msg.x = 1
-        euler_ref_msg.y = 2
-        euler_ref_msg.z = 3
+        euler_ref_msg.x = 1.
+        euler_ref_msg.y = 2.
+        euler_ref_msg.z = 3.
         rospy.loginfo(euler_ref_msg)
         pub.publish(euler_ref_msg)
         rate.sleep()
