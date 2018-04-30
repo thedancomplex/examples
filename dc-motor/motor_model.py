@@ -77,7 +77,7 @@ def getMotor(vin):
     theta = theta + d_theta * dt
     return theta
 
-i_udp_max = 100
+i_udp_max = 300
 xar = np.zeros(i_udp_max)
 yar = np.zeros(i_udp_max)
 i_udp = 0
@@ -111,7 +111,7 @@ def getUDP(i):
     #print "vin = " + str(vin) + " theta out = " + str(theta_out)
 
 def init():
-  ani = animation.FuncAnimation(fig, getUDP,frames=500, interval=1)
+  ani = animation.FuncAnimation(fig, getUDP,frames=1000, interval=1)
   plt.show()
 
 
