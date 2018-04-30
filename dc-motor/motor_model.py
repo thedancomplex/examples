@@ -13,6 +13,25 @@ sock = socket.socket(socket.AF_INET, # Internet
 sock.bind((UDP_IP, UDP_PORT))
 sock.settimeout(0.01)
 
+
+
+#Send
+UDP_IP2 = "127.0.0.1"
+UDP_PORT2 = 5006
+MESSAGE = "0.0"
+
+print "UDP target IP:", UDP_IP2
+print "UDP target port:", UDP_PORT2
+print "message:", MESSAGE
+
+sock2 = socket.socket(socket.AF_INET, # Internet
+                             socket.SOCK_DGRAM) # UDP
+
+
+
+
+
+
 t00 = time.time()
 t0 = time.time()
 t1 = time.time()
@@ -85,12 +104,14 @@ def getUDP(i):
     if(i_udp >= i_udp_max):
         i_udp = 0
         FLAG_INT = True
+    sock2.sendto(str(theta_out), (UDP_IP2, UDP_PORT2))
     ax1.clear()
     ax1.scatter(xar,yar)
+    #ax1.scatter(xar,yar)
     #print "vin = " + str(vin) + " theta out = " + str(theta_out)
 
 def init():
-  ani = animation.FuncAnimation(fig, getUDP,frames=100, interval=5)
+  ani = animation.FuncAnimation(fig, getUDP,frames=500, interval=1)
   plt.show()
 
 
