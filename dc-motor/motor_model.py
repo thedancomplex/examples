@@ -11,7 +11,7 @@ UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET, # Internet
                              socket.SOCK_DGRAM) # UDP
 sock.bind((UDP_IP, UDP_PORT))
-sock.settimeout(0.05)
+sock.settimeout(0.01)
 
 t00 = time.time()
 t0 = time.time()
@@ -29,13 +29,6 @@ tt2 = np.arange(0.0, 5.0, 0.02)
 
 fig = plt.figure()
 ax1 = fig.add_subplot(1,1,1)
-
-
-
-
-
-
-
 
 def getMotor(vin):
     global t0, t1, i, d_theta, theta
@@ -72,7 +65,7 @@ i_udp = 0
 FLAG_INI = False
 
 def getUDP(i):
-    global FLAG_INI, vin, t1, t0, t00, i_udp_max, xar, yar, i_udp
+    global FLAG_INI, vin, t1, t0, t00, i_udp_max, xar, yar, i_udp, ax1
     try:
       s_vin, addr = sock.recvfrom(1024)
       vin = float(s_vin)
@@ -83,18 +76,22 @@ def getUDP(i):
     t0 = t1
     xar[i_udp] = t1 - t00
     yar[i_udp] = theta_out
-    if(FLAG_INI == False):
-        for ii in range(i_udp,i_udp_max):
-            xar[ii] = xar[i_udp]
-            yar[ii] = yar[i_udp]
+#    if(FLAG_INI == False):
+#        for ii in range(i_udp,i_udp_max):
+#            xar[ii] = xar[i_udp]
+#            yar[ii] = yar[i_udp]
     if(i_udp < i_udp_max):
         i_udp = i_udp + 1
     if(i_udp >= i_udp_max):
         i_udp = 0
         FLAG_INT = True
     ax1.clear()
-    ax1.plot(xar,yar)
+    ax1.scatter(xar,yar)
     #print "vin = " + str(vin) + " theta out = " + str(theta_out)
 
-ani = animation.FuncAnimation(fig, getUDP, interval=50)
-plt.show()
+def init():
+  ani = animation.FuncAnimation(fig, getUDP,frames=100, interval=5)
+  plt.show()
+
+
+init()
