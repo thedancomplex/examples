@@ -74,7 +74,8 @@ FLAG_INI = False
 def getUDP(i):
     global FLAG_INI, vin, t1, t0, t00, i_udp_max, xar, yar, i_udp
     try:
-      vin, addr = sock.recvfrom(1024)
+      s_vin, addr = sock.recvfrom(1024)
+      vin = float(s_vin)
     except:
         vin = vin
     t1 = time.time()
@@ -93,7 +94,7 @@ def getUDP(i):
         FLAG_INT = True
     ax1.clear()
     ax1.plot(xar,yar)
-    print "vin = " + str(vin) + " theta out = " + str(theta_out)
+    #print "vin = " + str(vin) + " theta out = " + str(theta_out)
 
 ani = animation.FuncAnimation(fig, getUDP, interval=50)
 plt.show()
