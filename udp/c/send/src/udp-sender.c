@@ -10,7 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
-
+#include "receive.h"
 #define BUFSIZE 1024
 
 /* 
@@ -61,9 +61,14 @@ int main(int argc, char **argv) {
     printf("Please enter msg: ");
     fgets(buf, BUFSIZE, stdin);
 
+    state_t state;
+    memset(&state, 0, sizeof(state));
+    state.imu.x = 1.234;
+
     /* send the message to the server */
     serverlen = sizeof(serveraddr);
-    n = sendto(sockfd, buf, strlen(buf), 0, &serveraddr, serverlen);
+    n = sendto(sockfd, &state, sizeof(state), 0, &serveraddr, serverlen);
+    //n = sendto(sockfd, buf, strlen(buf), 0, &serveraddr, serverlen);
     if (n < 0) 
       error("ERROR in sendto");
     

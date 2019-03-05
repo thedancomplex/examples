@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
+#include "receive.h"
 
 #define BUFSIZE 1024
 
@@ -65,9 +66,14 @@ int main(int argc, char **argv) {
         perror("bind failed"); 
         exit(EXIT_FAILURE); 
     } 
-    n = recvfrom(sockfd, buf, sizeof(buf), 0, &serveraddr, &serverlen);
+
+    state_t state;
+    memset(&state, 0, sizeof(state));
+
+    n = recvfrom(sockfd, &state, sizeof(state), 0, &serveraddr, &serverlen);
+    //n = recvfrom(sockfd, buf, sizeof(buf), 0, &serveraddr, &serverlen);
     if (n < 0) 
       error("ERROR in recvfrom");
-    printf("Echo from server: %s of length %d\n", buf, n);
+    printf("Echo from server: %f of length %d\n", state.imu.x, n);
     return 0;
 }
