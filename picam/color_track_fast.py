@@ -10,8 +10,8 @@ cap = cv2.VideoCapture(0)
 # V = 100
 H = int(np.floor(240/2))
 diff = 20
-lowerBound=np.array([H-diff,100,50])
-upperBound=np.array([H+diff,255,150])
+lowerBound=np.array([H-diff,100,10])
+upperBound=np.array([H+diff,255,255])
 
 
 
@@ -38,6 +38,14 @@ while(True):
 
    # Get mask  - 0.009
    mask=cv2.inRange(imgHSV,lowerBound,upperBound)
+
+   
+   cv2.imshow("Mask (no filter)", mask)
+   
+   # erode/diolate
+   kernel = np.ones((3,3), np.uint8)
+   mask = cv2.erode(mask, kernel, iterations=1)
+   mask = cv2.dilate(mask, kernel, iterations=1)
 
    # Get center  - 0.008
    center = getCenter(mask)
