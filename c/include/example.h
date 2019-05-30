@@ -1,0 +1,1 @@
+#define EXAMPLE_DEFINE 42
