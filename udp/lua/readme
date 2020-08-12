@@ -1,0 +1,6 @@
+install lua sockets:
+luarocks install https://raw.githubusercontent.com/diegonehab/luasocket/master/luasocket-scm-0.rockspec
+
+or
+
+luarocks install luasocket
