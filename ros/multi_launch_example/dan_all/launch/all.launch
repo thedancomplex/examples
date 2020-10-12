@@ -1,0 +1,27 @@
+<launch>
+
+  <node pkg ="dan_all"
+        type="main.py"
+        name="dan_all_node"
+        output="screen">
+  </node>
+
+  <node pkg ="dan_move_robot"
+        type="main.py"
+        name="dan_move_robot_node"
+        output="screen">
+  </node>
+
+    <node pkg ="dan_watchdog"
+        type="main.py"
+        name="dan_watchdog_node"
+        output="screen">
+  </node>
+
+    <node pkg ="dan_keyboard_input"
+        type="main.py"
+        name="dan_keyboard_input_node"
+        output="screen">
+  </node>
+
+</launch>

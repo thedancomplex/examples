@@ -1,0 +1,9 @@
+<launch>
+
+    <node pkg ="dan_keyboard_input"
+        type="main.py"
+        name="dan_keyboard_input_node"
+        output="screen">
+  </node>
+
+</launch>
