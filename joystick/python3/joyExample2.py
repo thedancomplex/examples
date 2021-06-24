@@ -1,5 +1,4 @@
 from __future__ import print_function
-import rclpy
 from time import sleep
 from inputs import get_gamepad
 import numpy as np
