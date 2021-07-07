@@ -18,6 +18,12 @@ class RobotClass:
         the_global = var
         return
 
+    def checkGlobal(self):
+        global the_global
+        print(self.the_global)
+        print(the_global)
+        return
+
     def setSelf(self, var):
         self.the_self = var
         return
