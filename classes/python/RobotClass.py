@@ -15,6 +15,7 @@ class RobotClass:
 
     def setGlobal(self, var):
         global the_global
+        the_global = var
         return
 
     def setSelf(self, var):
